@@ -8,6 +8,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 package com.zhucode.web.quick.argresolver;
 
 import org.springframework.beans.SimpleTypeConverter;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.annotation.ValueConstants;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -16,6 +17,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.zhucode.web.quick.annotation.Para;
+import com.zhucode.web.quick.exception.ParamErrorexception;
 
 
 
@@ -40,9 +42,6 @@ public class ParaHandlerMethodArgumentResolver implements HandlerMethodArgumentR
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
 			WebDataBinderFactory binderFactory) throws Exception {
 		Para p = parameter.getParameterAnnotation(Para.class);
-		if (p == null) {
-			return null;
-		}
 		Object val = webRequest.getParameter(p.name());
 		if (!p.required()) {
 			if (val == null) {
@@ -52,6 +51,10 @@ public class ParaHandlerMethodArgumentResolver implements HandlerMethodArgumentR
 		if (ValueConstants.DEFAULT_NONE.equals(val)) {
 			return null;
 		}
-		return converter.convertIfNecessary(val, parameter.getParameterType());
+		try {
+			return converter.convertIfNecessary(val, parameter.getParameterType());
+		} catch (TypeMismatchException e) {
+			throw new ParamErrorexception(p.name(), e.getMessage());
+		}
 	}
 }

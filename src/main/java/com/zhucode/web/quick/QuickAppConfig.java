@@ -15,11 +15,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.zhucode.web.quick.argresolver.ParaHandlerMethodArgumentResolver;
-import com.zhucode.web.quick.interceptor.ValidatorHandlerInterceptor;
 
 /**
  * @author zhu jinxian
@@ -34,11 +32,6 @@ public class QuickAppConfig extends WebMvcConfigurerAdapter {
 	}
 	
 	@Bean
-	public ValidatorHandlerInterceptor validatorHandlerInterceptor() {
-	    return new ValidatorHandlerInterceptor();
-	}
-
-	@Bean
 	ParaHandlerMethodArgumentResolver paraHandlerMethodArgumentResolver() {
 		return new ParaHandlerMethodArgumentResolver();
 	}
@@ -49,8 +42,4 @@ public class QuickAppConfig extends WebMvcConfigurerAdapter {
 		argumentResolvers.add(new ParaHandlerMethodArgumentResolver());
 	}
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(validatorHandlerInterceptor());
-	}
 }
